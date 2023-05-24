@@ -1,10 +1,10 @@
 // Creates a KeyVault with Private Link Endpoint
 @description('The Azure Region to deploy the resources into')
-param location string 
+param location string
 param privateEndpointName string
 param privateDnsZoneName string
 
-param pvtEndpointDnsGroupName string 
+param pvtEndpointDnsGroupName string
 param virtualNetworkId string
 param subnetId string
 param privateLinkServiceId string
@@ -29,20 +29,15 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
       }
     ]
   }
- 
+
 }
-
-
 
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: privateDnsZoneName
   location: 'global'
   properties: {}
- 
+
 }
-
-
-
 
 resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: privateDnsZone
@@ -72,4 +67,3 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
     privateEndpoint
   ]
 }
-

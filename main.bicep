@@ -1,17 +1,14 @@
 param location string
 
-
 // Virtual network et subnets  vnet-apps-nonprod-frace-001
 
 // Noms des ressources Virtual network et subnets
 var virtualNetworkName = 'vnet-meetup-demo'
-var subnetName ='snet-meetup-demo'
-var subnetAddressPrefix           ='10.9.33.0/24'
+var subnetName = 'snet-meetup-demo'
+var subnetAddressPrefix = '10.9.33.0/24'
 var vnetAddressPrefix = '10.9.0.0/16'
 
-
 var rgAppsSecurityName = 'rg-meetup-demo'
-
 
 // Nom du key vault (suffixe "-002" pour la prod puisque "-006" est déjà pris)
 var keyVaultName = 'kv-meetup-demo'
@@ -35,26 +32,23 @@ module rg_apps_security 'modules/resource_group.bicep' = {
   }
 }
 
-
 module keyvault 'modules/key_vault.bicep' = {
   scope: resourceGroup(rgAppsSecurityName)
   name: keyVaultName
   params: {
     location: location
     keyvaultName: keyVaultName
-    
+
   }
 
-  dependsOn :   [
+  dependsOn: [
     rg_apps_security
   ]
 }
 
-
 //VNET
 
-
-module vnet 'modules/vnet.bicep' = { 
+module vnet 'modules/vnet.bicep' = {
   scope: resourceGroup(rgAppsSecurityName)
   name: virtualNetworkName
   params: {
@@ -63,35 +57,37 @@ module vnet 'modules/vnet.bicep' = {
     vnetAddressPrefix: vnetAddressPrefix
 
   }
+
+  dependsOn: [
+    rg_apps_security
+  ]
 }
-module subnets 'modules/subnets.bicep' = { 
+module subnets 'modules/subnets.bicep' = {
   scope: resourceGroup(rgAppsSecurityName)
   name: subnetName
   params: {
-    
+
     virtualNetworkName: virtualNetworkName
-    subnetName : subnetName
+    subnetName: subnetName
     addressPrefix: subnetAddressPrefix
 
   }
 
-  dependsOn :   [
+  dependsOn: [
     vnet
   ]
 }
 
-
 var privateDnsZoneName = 'privatelink.vaultcore.azure.net'
-var pvtEndpointDnsGroupName  = '${privateEndpoint_KvName}/mydnsgroupname'
+var pvtEndpointDnsGroupName = '${privateEndpoint_KvName}/mydnsgroupname'
 
-
-module keyvaultPrivateEndpoint 'modules/private_endpoint.bicep' = { 
+module keyvaultPrivateEndpoint 'modules/private_endpoint.bicep' = {
   scope: resourceGroup(rgAppsSecurityName)
   name: privateEndpoint_KvName
   params: {
     location: location
     privateEndpointName: privateEndpoint_KvName
-    privateDnsZoneName : privateDnsZoneName
+    privateDnsZoneName: privateDnsZoneName
     pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
     virtualNetworkId: vnet.outputs.id
     privateLinkConnexionService_kvName: privateLinkConnexionService_kvName
@@ -100,7 +96,7 @@ module keyvaultPrivateEndpoint 'modules/private_endpoint.bicep' = {
     privateLinkServiceId: keyvault.outputs.id
   }
 
-  dependsOn :   [
+  dependsOn: [
     vnet, keyvault
   ]
 }

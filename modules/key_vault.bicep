@@ -1,12 +1,9 @@
 // Creates a KeyVault with Private Link Endpoint
 @description('The Azure Region to deploy the resources into')
-param location string 
-
+param location string
 
 @description('The name of the Key Vault')
 param keyvaultName string
-
-
 
 resource keyVault 'Microsoft.KeyVault/vaults@2021-10-01' = {
   name: keyvaultName
@@ -20,7 +17,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-10-01' = {
     enableSoftDelete: false
     enableRbacAuthorization: true
     enablePurgeProtection: true
-    publicNetworkAccess:'disabled'
+    publicNetworkAccess: 'disabled'
     networkAcls: {
       bypass: 'AzureServices'
       defaultAction: 'Deny'
@@ -33,6 +30,5 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-10-01' = {
     tenantId: subscription().tenantId
   }
 }
-
 
 output id string = keyVault.id

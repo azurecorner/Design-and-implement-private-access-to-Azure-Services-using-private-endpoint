@@ -1,5 +1,3 @@
-
-
 @description('Name of the virtual network resource')
 param virtualNetworkName string
 
@@ -7,7 +5,7 @@ param virtualNetworkName string
 param subnetName string
 
 @description('Subnet address prefix')
-param addressPrefix string 
+param addressPrefix string
 
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2022-01-01' = {
   name: '${virtualNetworkName}/${subnetName}'
