@@ -1,0 +1,1 @@
+# Design-and-implement-private-access-to-Azure-Services-using-private-endpoint
