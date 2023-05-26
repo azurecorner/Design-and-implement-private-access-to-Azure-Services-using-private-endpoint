@@ -86,11 +86,12 @@ az deployment sub create `
 --parameters location=$location 
 
 ###  ** Test the deployment **
-#### 1. Tester le deploiement du private endpoint pour la keyvault
+#### 1. Test the deployment of the private endpoint for the keyvault
 
 $KEYVAULTNAME="kv-meetup-demo"
 nslookup "$KEYVAULTNAME.vault.azure.net"
-#### doit afficher le résultat suivant dans la console où 10.9.33.4 est l'adresse ip configuré dans la private endpoint
+
+#### should display the following result where 10.9.33.4 is the private ip address configured in the private endpoint
 
 Server:  UnKnown
 Address:  168.63.129.16
@@ -100,19 +101,19 @@ Name:    kv-meetup-demo.privatelink.vaultcore.azure.net
 Address:  10.9.33.4
 Aliases:  kv-meetup-demo.vault.azure.net
 
-#### 2. set secret list and get access policies to the service principal
+#### 2. set secret list and get service principal access policies
 We should set the list and get secret access policy for the service principal or user 
 https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal
-#### 3. ajouter un secret à un keyvault
 
+#### 3. add a secret to a keyvault
 $SECRET_NAME="MySecretName"
 $SECRET_VALUE="MySecretValue"
 az keyvault secret set --name $SECRET_NAME --vault-name $KEYVAULTNAME --value $SECRET_VALUE
 
-#### 4. afficher la liste des secrets du keyvault
+#### 4. show list of keyvault secrets
 az keyvault secret list --vault-name $KEYVAULTNAME
-#### doit afficher le résultat suivant
 
+#### should display the following result
 [
   {
     "attributes": {
@@ -134,10 +135,10 @@ az keyvault secret list --vault-name $KEYVAULTNAME
   }
 ]
 
-#### 5. afficher la valeur d'un secret
+#### 5. display the value of a secret
 $SECRET_NAME="MySecretName"
 az keyvault secret show --name $SECRET_NAME --vault-name $KEYVAULTNAME --query value -o tsv
 
-#### doit afficher le résultat suivant où MySecretValue est la valeur du secret MySecretName 
+#### should display the following result where MySecretValue is the value of the secret MySecretName
  should display the following value : 
  MySecretValue
