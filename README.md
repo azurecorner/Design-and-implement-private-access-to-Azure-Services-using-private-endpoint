@@ -41,9 +41,17 @@ This scenario uses the following Azure services:
 
 az login 
 
+$ARM_CLIENT_ID="VOTRE_ARM_CLIENT_ID"
+$ARM_CLIENT_SECRET="VOTRE_ARM_CLIENT_SECRET"
+$ARM_TENANT_ID="VOTRE_ARM_TENANT_ID"
+$ARM_SUBSCRIPTION_ID="VOTRE_ARM_SUBSCRIPTION_ID"
 
- $ARM_SUBSCRIPTION_ID="023b2039-5c23-44b8-844e-c002f8ed431d"
+$ARM_CLIENT_ID="VOTRE_ARM_CLIENT_ID"
+$ARM_CLIENT_SECRET="VOTRE_ARM_CLIENT_SECRET"
+$ARM_TENANT_ID="VOTRE_ARM_TENANT_ID"
+$ARM_SUBSCRIPTION_ID="VOTRE_ARM_SUBSCRIPTION_ID"
 
+az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET -t $ARM_TENANT_ID
 
 az account set --subscription $ARM_SUBSCRIPTION_ID
 
@@ -78,7 +86,57 @@ az deployment sub create `
 --parameters location=$location 
 
 ###  ** Test the deployment **
+#### 1. Tester le deploiement du private endpoint pour la keyvault
 
+$KEYVAULTNAME="kv-meetup-demo"
+nslookup "$KEYVAULTNAME.vault.azure.net"
+#### doit afficher le résultat suivant dans la console où 10.9.33.4 est l'adresse ip configuré dans la private endpoint
 
-  git config --global user.email "leyegora@yahoo.fr"
-  git config --global user.name "azurecorner"
+Server:  UnKnown
+Address:  168.63.129.16
+
+Non-authoritative answer:
+Name:    kv-meetup-demo.privatelink.vaultcore.azure.net
+Address:  10.9.33.4
+Aliases:  kv-meetup-demo.vault.azure.net
+
+#### 2. set secret list and get access policies to the service principal
+We should set the list and get secret access policy for the service principal or user 
+https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal
+#### 3. ajouter un secret à un keyvault
+
+$SECRET_NAME="MySecretName"
+$SECRET_VALUE="MySecretValue"
+az keyvault secret set --name $SECRET_NAME --vault-name $KEYVAULTNAME --value $SECRET_VALUE
+
+#### 4. afficher la liste des secrets du keyvault
+az keyvault secret list --vault-name $KEYVAULTNAME
+#### doit afficher le résultat suivant
+
+[
+  {
+    "attributes": {
+      "created": "2023-05-26T08:48:46+00:00",
+      "enabled": true,
+      "expires": null,
+      "notBefore": null,
+      "recoverableDays": 0,
+      "recoveryLevel": "Purgeable",
+      "updated": "2023-05-26T08:48:46+00:00"
+    },
+    "contentType": null,
+    "id": "https://kv-meetup-demo.vault.azure.net/secrets/MySecretName",
+    "managed": null,
+    "name": "MySecretName",
+    "tags": {
+      "file-encoding": "utf-8"
+    }
+  }
+]
+
+#### 5. afficher la valeur d'un secret
+$SECRET_NAME="MySecretName"
+az keyvault secret show --name $SECRET_NAME --vault-name $KEYVAULTNAME --query value -o tsv
+ #### doit afficher le résultat suivant où MySecretValue est la valeur du secret MySecretName 
+ should display the following value : 
+ MySecretValue
