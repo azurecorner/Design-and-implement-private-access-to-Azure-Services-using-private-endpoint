@@ -42,13 +42,11 @@ This scenario uses the following Azure services:
 az login 
 
 $ARM_CLIENT_ID="VOTRE_ARM_CLIENT_ID"
-$ARM_CLIENT_SECRET="VOTRE_ARM_CLIENT_SECRET"
-$ARM_TENANT_ID="VOTRE_ARM_TENANT_ID"
-$ARM_SUBSCRIPTION_ID="VOTRE_ARM_SUBSCRIPTION_ID"
 
-$ARM_CLIENT_ID="VOTRE_ARM_CLIENT_ID"
 $ARM_CLIENT_SECRET="VOTRE_ARM_CLIENT_SECRET"
+
 $ARM_TENANT_ID="VOTRE_ARM_TENANT_ID"
+
 $ARM_SUBSCRIPTION_ID="VOTRE_ARM_SUBSCRIPTION_ID"
 
 az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET -t $ARM_TENANT_ID
@@ -60,6 +58,7 @@ az account show
 ###  ** Validate the deployment **
 
 $location  ="westeurope"
+
 az deployment sub validate  `
 --location $location  `
 --name "irpsandbox"  `
@@ -70,6 +69,7 @@ az deployment sub validate  `
 
 
 $location  ="westeurope"
+
 az deployment sub  what-if  `
 --location $location  `
 --name "irpsandbox"  `
@@ -79,6 +79,7 @@ az deployment sub  what-if  `
 ###  ** Perform the deployment **
 
 $location  ="westeurope"
+
 az deployment sub create `
 --location $location  `
 --name "irpsandbox"  `
@@ -89,6 +90,7 @@ az deployment sub create `
 #### 1. Test the deployment of the private endpoint for the keyvault
 
 $KEYVAULTNAME="kv-meetup-demo"
+
 nslookup "$KEYVAULTNAME.vault.azure.net"
 
 #### should display the following result where 10.9.33.4 is the private ip address configured in the private endpoint
@@ -107,7 +109,9 @@ https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?t
 
 #### 3. add a secret to a keyvault
 $SECRET_NAME="MySecretName"
+
 $SECRET_VALUE="MySecretValue"
+
 az keyvault secret set --name $SECRET_NAME --vault-name $KEYVAULTNAME --value $SECRET_VALUE
 
 #### 4. show list of keyvault secrets
@@ -137,6 +141,7 @@ az keyvault secret list --vault-name $KEYVAULTNAME
 
 #### 5. display the value of a secret
 $SECRET_NAME="MySecretName"
+
 az keyvault secret show --name $SECRET_NAME --vault-name $KEYVAULTNAME --query value -o tsv
 
 #### should display the following result where MySecretValue is the value of the secret MySecretName
