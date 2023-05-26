@@ -137,6 +137,7 @@ az keyvault secret list --vault-name $KEYVAULTNAME
 #### 5. afficher la valeur d'un secret
 $SECRET_NAME="MySecretName"
 az keyvault secret show --name $SECRET_NAME --vault-name $KEYVAULTNAME --query value -o tsv
- #### doit afficher le résultat suivant où MySecretValue est la valeur du secret MySecretName 
+
+#### doit afficher le résultat suivant où MySecretValue est la valeur du secret MySecretName 
  should display the following value : 
  MySecretValue
