@@ -1,35 +1,43 @@
 # Design-and-implement-private-access-to-Azure-Services-using-private-endpoint
+A private endpoint is a network interface that uses a private IP address from your virtual network. This network interface connects you privately and securely to a service that's powered by Azure Private Link. By enabling a private endpoint, you're bringing the service into your virtual network.
 
+https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview
+
+Azure Private Link enables you to access Azure PaaS Services (for example, Azure Storage and SQL Database) and Azure hosted customer-owned/partner services over a private endpoint in your virtual network.
+
+Traffic between your virtual network and the service travels the Microsoft backbone network. Exposing your service to the public internet is no longer necessary. You can create your own private link service in your virtual network and deliver it to your customers. Setup and consumption using Azure Private Link is consistent across Azure PaaS, customer-owned, and shared partner services.
 
 ![architecture](https://github.com/azurecorner/Design-and-implement-private-access-to-Azure-Services-using-private-endpoint/assets/108787059/0bc8ce0b-93a3-4a83-99ff-4dfe454f7734)
 
-Workflow
+# Workflow
 The web app receives an HTTP request from the internet that requires an API call to the Azure SQL Database.
 
-By default, web apps hosted in App Service can reach only internet-hosted endpoints. To communicate with the resources in your virtual network that aren't internet facing, you need to enable regional virtual network integration. Region virtual network integration gives the web app access to resources in the virtual network that aren't internet-hosted endpoint. Regional network integration mounts a virtual interface in the AppSvcSubnet that the App Service web app connects to.
+Azure Bastion is a service you deploy that lets you connect to a virtual machine using your browser and the Azure portal
+Bastion provides secure RDP and SSH connectivity to all of the VMs in the virtual network in which it is provisioned. Using Azure Bastion protects your virtual machines from exposing RDP/SSH ports to the outside world, while still providing secure access using RDP/SSH.
 
-The web app connects to the virtual network through a virtual interface mounted in the AppSvcSubnet of the virtual network.
+The virtual machine  connects to the virtual network through a virtual interface mounted in the ManagementSubnet of the virtual network.
 
-Azure Private Link sets up a private endpoint for the Azure SQL Database in the PrivateLinkSubnet of the virtual network.
+Azure Private Link sets up a private endpoint for the Azure  Keyvault in the PrivateLinkSubnet of the virtual network.
 
-The web app sends a query for the IP address of the Azure SQL Database. The query traverses the virtual interface in the AppSvcSubnet. The CNAME of the Azure SQL Database directs the query to the private DNS zone. The private DNS zone returns the private IP address of the private endpoint set up for the Azure SQL Database.
+The virtual machine sends a query for the IP address of the Azure Keyvault. The query traverses the virtual interface in the ManagementSubnet. The CNAME of the Azure Keyvault directs the query to the private DNS zone. The private DNS zone returns the private IP address of the private endpoint set up for the Azure Keyvault.
 
-The web app connects to the Azure SQL Database through the private endpoint in the PrivateLinkSubnet.
+The virtual machine connects to the Azure Keyvault through the private endpoint in the PrivateLinkSubnet.
 
-The Azure SQL Database firewall allows only traffic coming from the PrivateLinkSubnet to connect. The database is inaccessible from the public internet.
+The Azure Keyvault firewall allows only traffic coming from the PrivateLinkSubnet to connect. The Keyvault is inaccessible from the public internet.
 
-Components
+# Components
 This scenario uses the following Azure services:
 
-Azure App Service hosts web applications, allowing autoscale and high availability without having to manage infrastructure.
+* Azure Virtual machine
+* Azure Bastion host
+* Azure Keyvault
+* Azure Virtual Network
+* Azure Private Link provides a private endpoint in a Virtual Network for connectivity to Azure PaaS services like Azure Storage and SQL Database, or to customer or partner services.
+* Azure DNS hosts private DNS zones that provide a reliable, secure DNS service to manage and resolve domain names in a virtual network without the need to add a custom DNS solution.
 
-Azure SQL Database is a general-purpose relational database managed service that supports relational data, spatial data, JSON, and XML.
+# Deployment
 
-Azure Virtual Network is the fundamental building block for private networks in Azure. Azure resources like virtual machines (VMs) can securely communicate with each other, the internet, and on-premises networks through Virtual Networks.
-
-Azure Private Link provides a private endpoint in a Virtual Network for connectivity to Azure PaaS services like Azure Storage and SQL Database, or to customer or partner services.
-
-Azure DNS hosts private DNS zones that provide a reliable, secure DNS service to manage and resolve domain names in a virtual network without the need to add a custom DNS solution.
+###  ** Login to azure using your personal account or a service principal**
 
 az login 
 
@@ -41,6 +49,8 @@ az account set --subscription $ARM_SUBSCRIPTION_ID
 
 az account show
 
+###  ** Validate the deployment **
+
 $location  ="westeurope"
 az deployment sub validate  `
 --location $location  `
@@ -48,7 +58,7 @@ az deployment sub validate  `
 --template-file main.bicep `
 --parameters location=$location 
 
-
+###  ** Preview the deployment **
 
 
 $location  ="westeurope"
@@ -58,7 +68,7 @@ az deployment sub  what-if  `
 --template-file main.bicep `
 --parameters location=$location 
 
-
+###  ** Perform the deployment **
 
 $location  ="westeurope"
 az deployment sub create `
@@ -67,6 +77,7 @@ az deployment sub create `
 --template-file main.bicep `
 --parameters location=$location 
 
+###  ** Test the deployment **
 
 
   git config --global user.email "leyegora@yahoo.fr"
