@@ -10,7 +10,8 @@ Traffic between your virtual network and the service travels the Microsoft backb
 ![architecture](https://github.com/azurecorner/Design-and-implement-private-access-to-Azure-Services-using-private-endpoint/assets/108787059/0bc8ce0b-93a3-4a83-99ff-4dfe454f7734)
 
 # Workflow
-The web app receives an HTTP request from the internet that requires an API call to the Azure SQL Database.
+
+The user connect to azure portal from the internet and use the azure bastion.
 
 Azure Bastion is a service you deploy that lets you connect to a virtual machine using your browser and the Azure portal
 Bastion provides secure RDP and SSH connectivity to all of the VMs in the virtual network in which it is provisioned. Using Azure Bastion protects your virtual machines from exposing RDP/SSH ports to the outside world, while still providing secure access using RDP/SSH.
